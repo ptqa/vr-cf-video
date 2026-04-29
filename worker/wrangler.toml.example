@@ -1,0 +1,25 @@
+# vr-cf-video Worker config
+# Copy to wrangler.toml and fill in your values.
+#
+# Required secrets (set via `wrangler secret put`):
+#   - SHARED_PASSWORD     access password for the whole site
+
+name = "vr-cf-video"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+
+# Site identity shown in the HTML index.
+[vars]
+SITE_TITLE = "VR Library"
+
+# Object storage. Bucket holds:
+#   videos/<filename>.mp4
+#   videos/<filename>.mp4.meta.json
+#   thumbs/<filename>.mp4.jpg
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "vr-cf-video"
+
+# Optional: enable observability for runtime logs.
+# [observability]
+# enabled = true

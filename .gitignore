@@ -1,0 +1,20 @@
+node_modules/
+dist/
+.wrangler/
+
+# secrets — never commit
+worker/wrangler.toml
+cli/vr-cf.toml
+
+# legacy archive (already extracted into legacy/)
+*.7z
+
+# editor / OS noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# logs
+*.log
+tmp/

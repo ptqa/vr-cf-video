@@ -1,0 +1,25 @@
+{
+  "name": "vr-cf-cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "vr-cf": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir ./dist --target bun",
+    "dev": "bun run src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1033.0",
+    "@types/cli-progress": "^3.11.6",
+    "cli-progress": "^3.12.0",
+    "commander": "^14.0.0",
+    "toml": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.0",
+    "typescript": "^5.8.0"
+  }
+}
