@@ -24,3 +24,17 @@ seek_seconds = 30
 width = 640
 # JPEG quality (ffmpeg -q:v scale 1=best, 31=worst).
 quality = 4
+
+[upload]
+# Multipart chunk size in MB. Bigger = fewer round-trips per file.
+# 64MB is a good default for fast home links. Drop to 16-32MB on flaky
+# connections so retries are cheaper.
+part_size_mb = 64
+# Parallel parts uploaded per file.
+# Peak RAM ≈ part_size_mb × part_concurrency.
+# Bump if your upstream is gigabit-class and CPU is idle.
+part_concurrency = 8
+# Parallel file uploads when scanning a directory.
+# 1 is right for huge VR files (one file usually saturates upstream).
+# Bump to 2-3 if you have small files or surplus bandwidth.
+file_concurrency = 1

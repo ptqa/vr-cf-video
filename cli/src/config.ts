@@ -19,6 +19,14 @@ export interface Config {
     width: number;
     quality: number;
   };
+  upload: {
+    /** MB per multipart chunk. Bigger = fewer round-trips. */
+    part_size_mb: number;
+    /** Parallel part uploads per file. Peak RAM ≈ part_size × part_concurrency. */
+    part_concurrency: number;
+    /** Parallel file uploads when scanning a directory. */
+    file_concurrency: number;
+  };
 }
 
 // `homedir()` is cross-platform: `$HOME` on macOS/Linux, `%USERPROFILE%`
@@ -38,10 +46,16 @@ const REQUIRED_FIELDS = [
   'worker.shared_password',
 ] as const;
 
-const DEFAULTS: Config['thumbnail'] = {
+const THUMBNAIL_DEFAULTS: Config['thumbnail'] = {
   seek_seconds: 30,
   width: 640,
   quality: 4,
+};
+
+const UPLOAD_DEFAULTS: Config['upload'] = {
+  part_size_mb: 64,
+  part_concurrency: 8,
+  file_concurrency: 1,
 };
 
 /**
@@ -79,9 +93,14 @@ function applyDefaults(parsed: Partial<Config>): Config {
       shared_password: parsed.worker?.shared_password ?? '',
     },
     thumbnail: {
-      seek_seconds: parsed.thumbnail?.seek_seconds ?? DEFAULTS.seek_seconds,
-      width: parsed.thumbnail?.width ?? DEFAULTS.width,
-      quality: parsed.thumbnail?.quality ?? DEFAULTS.quality,
+      seek_seconds: parsed.thumbnail?.seek_seconds ?? THUMBNAIL_DEFAULTS.seek_seconds,
+      width: parsed.thumbnail?.width ?? THUMBNAIL_DEFAULTS.width,
+      quality: parsed.thumbnail?.quality ?? THUMBNAIL_DEFAULTS.quality,
+    },
+    upload: {
+      part_size_mb: parsed.upload?.part_size_mb ?? UPLOAD_DEFAULTS.part_size_mb,
+      part_concurrency: parsed.upload?.part_concurrency ?? UPLOAD_DEFAULTS.part_concurrency,
+      file_concurrency: parsed.upload?.file_concurrency ?? UPLOAD_DEFAULTS.file_concurrency,
     },
   };
 }
