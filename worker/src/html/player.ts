@@ -4,9 +4,12 @@ import type { CatalogEntry, Env } from '../types';
 import { STYLES } from './styles';
 
 /**
- * Per-video page. Plain HTML5 `<video>` for flat preview + a deep-link
- * button to launch the headset's DeoVR app. WebXR-in-browser is out of
- * scope for v1 — see PLAN.md "Open questions".
+ * Per-video page. Loads the DeoVR `<deo-video>` web component (bundle
+ * served from R2 under `assets/deovr/`) so 180°/MKX200/etc. content plays
+ * as actual VR in the browser, just like the legacy nginx setup.
+ *
+ * Plus deep-link buttons to launch the headset's DeoVR / HereSphere apps,
+ * and a metadata table.
  */
 export async function renderPlayer(
   filename: string,
@@ -60,16 +63,29 @@ function renderHtml(entry: CatalogEntry, origin: string, tq: string): string {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0b0d12">
 <title>${escapeHtml(entry.vr.title)}</title>
+<link rel="stylesheet" type="text/css" href="/assets/deovr/styles.css?${tq}">
 <style>${STYLES}</style>
+<style>
+  /* Constrain the DeoVR canvas so it fits inside our chrome. */
+  deo-video, deo-video iframe, deo-video canvas {
+    width: 100% !important;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    display: block;
+  }
+</style>
+<script src="/assets/deovr/bundle.js?${tq}" async></script>
 </head>
 <body>
 <div class="player">
   <a class="player-back" href="/?${tq}">← Library</a>
   <h1 class="player-title">${escapeHtml(entry.vr.title)}</h1>
 
-  <video controls preload="metadata" poster="${thumbUrl}">
+  <deo-video poster="${thumbUrl}">
     <source src="${videoUrl}" type="video/mp4">
-  </video>
+  </deo-video>
 
   <div class="player-actions">
     <a class="btn" href="${deovrDeeplink}">Open in DeoVR</a>

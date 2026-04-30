@@ -17,15 +17,8 @@ import type { Config } from './config';
  *
  * - Files <100MB go via single-part `PutObject`.
  * - Larger files use multipart upload with concurrent part uploads.
- * - Parts are buffered from disk per-part (each part lives in RAM until ack),
- *   so peak memory ≈ partSize × partConcurrency.
- *
- * Tuning knobs (see `[upload]` in `vr-cf.toml`):
- *   part_size_mb       — default 64.   Bigger = fewer round-trips, more RAM.
- *   part_concurrency   — default 8.    Bigger = more parallelism, more RAM.
- *
- * AWS SDK request checksums are disabled (R2 doesn't need them) — saves
- * meaningful CPU on every part.
+ * - Parts are streamed from disk (no full-file buffering) — important for
+ *   30–50GB VR videos.
  */
 export interface UploadProgress {
   loaded: number;
@@ -34,18 +27,16 @@ export interface UploadProgress {
   bytesPerSecond: number;
 }
 
+const PART_SIZE_BYTES = 50 * 1024 * 1024; // 50MB
+const PART_CONCURRENCY = 3;
 const MULTIPART_THRESHOLD_BYTES = 100 * 1024 * 1024;
 
 export class R2Uploader {
   private readonly client: S3Client;
   private readonly bucketName: string;
-  private readonly partSize: number;
-  private readonly partConcurrency: number;
 
   constructor(config: Config) {
     this.bucketName = config.r2.bucket_name;
-    this.partSize = (config.upload?.part_size_mb ?? 64) * 1024 * 1024;
-    this.partConcurrency = config.upload?.part_concurrency ?? 8;
     this.client = new S3Client({
       region: 'auto',
       endpoint: config.r2.endpoint,
@@ -53,9 +44,6 @@ export class R2Uploader {
         accessKeyId: config.r2.access_key_id,
         secretAccessKey: config.r2.secret_access_key,
       },
-      // R2 doesn't require request checksums — skip them to save CPU per part.
-      requestChecksumCalculation: 'WHEN_REQUIRED',
-      responseChecksumValidation: 'WHEN_REQUIRED',
     });
   }
 
@@ -185,11 +173,11 @@ export class R2Uploader {
       });
     };
 
-    const partCount = Math.ceil(fileSize / this.partSize);
+    const partCount = Math.ceil(fileSize / PART_SIZE_BYTES);
     const partDefs = Array.from({ length: partCount }, (_, i) => ({
       partNumber: i + 1,
-      offset: i * this.partSize,
-      length: Math.min(this.partSize, fileSize - i * this.partSize),
+      offset: i * PART_SIZE_BYTES,
+      length: Math.min(PART_SIZE_BYTES, fileSize - i * PART_SIZE_BYTES),
     }));
 
     let cursor = 0;
@@ -220,7 +208,7 @@ export class R2Uploader {
 
     try {
       await Promise.all(
-        Array.from({ length: Math.min(this.partConcurrency, partCount) }, () => worker())
+        Array.from({ length: Math.min(PART_CONCURRENCY, partCount) }, () => worker())
       );
 
       parts.sort((a, b) => a.PartNumber - b.PartNumber);

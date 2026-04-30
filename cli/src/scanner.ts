@@ -30,10 +30,6 @@ export interface UploadResult {
 /**
  * Scan a directory recursively and upload every video file found.
  * Per file: probe → thumbnail → upload video → upload sidecar.
- *
- * Files are processed with `config.upload.file_concurrency` workers. For huge
- * VR files a single worker usually saturates the upstream link; raise this if
- * you have surplus bandwidth and small-ish files.
  */
 export async function uploadDirectory(
   uploader: R2Uploader,
@@ -50,26 +46,17 @@ export async function uploadDirectory(
     errors: [],
   };
 
-  let cursor = 0;
-  const fileWorkerCount = Math.max(1, Math.min(config.upload.file_concurrency, files.length));
-
-  const worker = async (): Promise<void> => {
-    while (cursor < files.length) {
-      const idx = cursor++;
-      const filePath = files[idx];
-      const filename = basename(filePath);
-      try {
-        const wasUploaded = await uploadOne(uploader, config, filePath, filename, options);
-        if (wasUploaded) result.uploaded++;
-        else result.skipped++;
-      } catch (err) {
-        result.failed++;
-        result.errors.push({ filename, error: (err as Error).message });
-      }
+  for (const filePath of files) {
+    const filename = basename(filePath);
+    try {
+      const wasUploaded = await uploadOne(uploader, config, filePath, filename, options);
+      if (wasUploaded) result.uploaded++;
+      else result.skipped++;
+    } catch (err) {
+      result.failed++;
+      result.errors.push({ filename, error: (err as Error).message });
     }
-  };
-
-  await Promise.all(Array.from({ length: fileWorkerCount }, () => worker()));
+  }
 
   return result;
 }

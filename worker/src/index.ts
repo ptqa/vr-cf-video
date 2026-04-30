@@ -1,3 +1,4 @@
+import { serveAsset } from './assets';
 import { checkAuth } from './auth';
 import { invalidateCatalog } from './catalog';
 import { deovrIndex, deovrScene } from './deovr';
@@ -97,6 +98,12 @@ async function route(
   if (path.startsWith('/t/')) {
     const filename = decodeURIComponent(path.slice('/t/'.length));
     return serveThumbnail(filename, env);
+  }
+
+  // /assets/{...path}  (DeoVR bundle, styles, etc.)
+  if (path.startsWith('/assets/')) {
+    const assetPath = decodeURIComponent(path.slice('/assets/'.length));
+    return serveAsset(assetPath, env);
   }
 
   return null;
