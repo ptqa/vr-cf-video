@@ -1,0 +1,26 @@
+# vr-cf CLI configuration.
+# Copy this file to vr-cf.toml and fill in your credentials.
+
+[r2]
+# R2 S3-compatible API endpoint, account-scoped:
+#   https://<account-id>.r2.cloudflarestorage.com
+endpoint = "https://YOUR_ACCOUNT_ID.r2.cloudflarestorage.com"
+bucket_name = "vr-cf-video"
+# R2 access keys: created in Cloudflare Dashboard → R2 → Manage R2 API tokens.
+access_key_id = "..."
+secret_access_key = "..."
+
+[worker]
+# Public URL of the deployed Worker. Used for `vr-cf refresh` to drop the
+# catalog cache after upload.
+url = "https://vr.example.com"
+# Same as the Worker's SHARED_PASSWORD secret.
+shared_password = "..."
+
+[thumbnail]
+# Seconds into the video to grab the thumbnail frame from.
+seek_seconds = 30
+# Output JPEG width in pixels. Height auto from aspect.
+width = 640
+# JPEG quality (ffmpeg -q:v scale 1=best, 31=worst).
+quality = 4

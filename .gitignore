@@ -5,6 +5,10 @@ dist/
 # secrets — never commit
 worker/wrangler.toml
 cli/vr-cf.toml
+cli-go/vr-cf.toml
+
+# binaries
+cli-go/vr-cf
 
 # legacy archive (already extracted into legacy/)
 *.7z
