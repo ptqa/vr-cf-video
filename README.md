@@ -129,22 +129,10 @@ vr-cf stats                   total size, count, by studio
 
 ## Filename conventions
 
-The parser handles studio prefixes seen in the wild:
-
-| Prefix                      | Studio          |
-|-----------------------------|-----------------|
-| `SLR_…`                     | SLR             |
-| `Manny_S_…`                 | Manny S (SLR)   |
-| `NaughtyAmericaVR - …`      | NaughtyAmerica  |
-| `nam…` `naw…` `tdrm…` `tspa…` `ptgs…` | NaughtyAmerica (internal codes) |
-| `VirtualRealPorn_…`         | VirtualRealPorn |
-| `VRBANGERS_…`               | VRBangers       |
-| `wankzvr-…`                 | WankzVR         |
-
-Tag tokens recognised in any filename: `MKX200`, `MKX220`, `RF52`,
+The parser extracts metadata from filename tokens (studio prefix, resolution,
+projection, stereo). Tag tokens recognised: `MKX200`, `MKX220`, `RF52`,
 `FISHEYE`, `180x180`, `360x180`, `LR`, `TB`, `OU`, `3dh`, `mono`, `8K`,
-`6K`, `4K`, `vrdesktophd`, plus any `\d+p` resolution like `4096p` or
-`3600p`.
+`6K`, `4K`, `vrdesktophd`, plus any `\d+p` resolution like `4096p`.
 
 Unknown filenames still work — they get stored as-is and rendered with a
 sensible default (`equirect-180`, `sbs`, fallback title = filename).

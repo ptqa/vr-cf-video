@@ -22,3 +22,4 @@ Thumbs.db
 # logs
 *.log
 tmp/
+cli-go/cmd/vr-cf/vr-cf
