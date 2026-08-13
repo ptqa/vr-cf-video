@@ -120,7 +120,7 @@ vr-cf-video/
 | `/healthz`              | GET    | no   | health check                                 |
 
 `{key}` is the URL-encoded R2 object key without the `videos/` prefix, e.g.
-`SLR_AC%20VR_BEST%20BOOBS%20ON%20SLR_2900p_MKX200.mp4`.
+`Sample_Title_2900p_MKX200.mp4`.
 
 ## Auth model
 
@@ -138,11 +138,11 @@ the legacy setup's threat model (URL-only access).
 
 ## VR filename parser
 
-Filenames in legacy library encode VR attributes. Parser extracts:
+Filenames encode VR attributes. Parser extracts:
 
 | Attribute     | Detection                                                  |
 |---------------|------------------------------------------------------------|
-| `studio`      | prefix token (`SLR`, `VRBANGERS`, `wankzvr-`, `nam`, `tspa`, `tdrm`, `naw`, `ptgs`, `Manny_S_`, `NaughtyAmericaVR`, `VirtualRealPorn`) |
+| `studio`      | prefix token (studio codes) |
 | `projection`  | `180x180`/`_180_` → `equirect`+180; `_360_` → `equirect`+360; `MKX200`/`MKX220` → `mkx200`/`mkx220`; `FISHEYE` → `fisheye`; default `equirect` |
 | `stereoMode`  | `_LR`/`3dh`/`SBS` → `sbs`; `_TB`/`_OU` → `tb`; `mono` → `off`; default `sbs` |
 | `resolution`  | extract `(\d+)p` or `8K`/`6K`/`4K`/`2K` keywords          |
@@ -175,9 +175,9 @@ shared password) which deletes the cache entry.
     "name": "Library",
     "list": [
       {
-        "title": "BEST BOOBS ON SLR",
-        "thumbnailUrl": "https://host/t/SLR_AC%20VR_..._MKX200.mp4?t=...",
-        "video_url": "https://host/deovr/SLR_AC%20VR_..._MKX200.mp4?t=..."
+        "title": "Sample Title",
+        "thumbnailUrl": "https://host/t/Sample_Title_..._MKX200.mp4?t=...",
+        "video_url": "https://host/deovr/Sample_Title_..._MKX200.mp4?t=..."
       }
     ]
   }]
@@ -192,11 +192,11 @@ shared password) which deletes the cache entry.
     "name": "h264",
     "videoSources": [{
       "resolution": 2900,
-      "url": "https://host/v/SLR_AC%20VR_..._MKX200.mp4?t=..."
+      "url": "https://host/v/Sample_Title_..._MKX200.mp4?t=..."
     }]
   }],
-  "title": "BEST BOOBS ON SLR",
-  "id": "SLR_AC...",
+  "title": "Sample Title",
+  "id": "Sample_Title...",
   "videoLength": 1740,
   "is3d": true,
   "screenType": "mkx200",
@@ -271,9 +271,9 @@ Thumb key = video key + `.jpg` so they're trivially derivable both directions.
   </linearGradient></defs>
   <rect width="640" height="360" fill="url(#g)"/>
   <text x="320" y="160" fill="#fff" text-anchor="middle"
-        font-family="sans-serif" font-size="24" font-weight="700">SLR</text>
+        font-family="sans-serif" font-size="24" font-weight="700">STUDIO</text>
   <text x="320" y="200" fill="#aaa" text-anchor="middle"
-        font-family="sans-serif" font-size="16">BEST BOOBS ON SLR</text>
+        font-family="sans-serif" font-size="16">Sample Title</text>
 </svg>
 ```
 
@@ -299,14 +299,14 @@ fit in HTML). For libraries >1000, would switch to JSON + virtualized grid.
 ```
 ┌──────────────────────────────────────────────────────────┐
 │  VR Library                              [search.....]   │
-│  154 videos · SLR · VRBangers · Wankz · NA · ...         │
+│  154 videos · Studio A · Studio B · ...                 │
 ├──────────────────────────────────────────────────────────┤
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐     │
 │  │  thumb   │ │  thumb   │ │  thumb   │ │  thumb   │     │
 │  │          │ │          │ │          │ │          │     │
 │  ├──────────┤ ├──────────┤ ├──────────┤ ├──────────┤     │
 │  │ Title... │ │ Title... │ │ Title... │ │ Title... │     │
-│  │ SLR·8K   │ │ VRB·4K   │ │ NA·2K    │ │ Wankz·6K │     │
+│  │ Studio·8K│ │ Studio·4K│ │ Studio·2K│ │ Studio·6K│     │
 │  └──────────┘ └──────────┘ └──────────┘ └──────────┘     │
 └──────────────────────────────────────────────────────────┘
 ```

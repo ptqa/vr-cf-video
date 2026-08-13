@@ -36,7 +36,7 @@ wrangler config, Bun CLI w/ commander.
   thumbs/<filename>.mp4.jpg
   ```
 - Object key passed to URLs is the bare filename (URL-encoded), e.g.
-  `/v/SLR_AC%20VR_BEST%20BOOBS_2900p_MKX200.mp4`.
+  `/v/Sample_Title_2900p_MKX200.mp4`.
 
 ## Tooling
 

@@ -66,7 +66,7 @@ var studioMatchers = []studioMatcher{
 	{studio: "Manny S (SLR)", pattern: regexp.MustCompile(`(?i)^Manny_S[_-]`)},
 }
 
-// NaughtyAmerica short codes handled separately because Go RE2 doesn't support lookahead.
+// Short codes handled separately because Go RE2 doesn't support lookahead.
 var naShortCodes = []string{"nam", "naw", "tdrm", "tspa", "ptgs"}
 
 var tagTokenSet = map[string]struct{}{
@@ -211,7 +211,7 @@ func detectStudio(stem string) (*string, string) {
 			return &s, remainder
 		}
 	}
-	// Check NaughtyAmerica short codes: prefix + lookahead [a-z] (case-insensitive).
+	// Check short codes: prefix + lookahead [a-z] (case-insensitive).
 	lower := strings.ToLower(stem)
 	for _, code := range naShortCodes {
 		if strings.HasPrefix(lower, code) && len(stem) > len(code) {
@@ -255,7 +255,7 @@ func extractTitle(remainder, fullStem string) string {
 }
 
 // ParseVrFilename parses a VR video filename into structured metadata.
-// Example: "SLR_Sample Title_2900p_MKX200.mp4"
+// Example: "Sample_Title_2900p_MKX200.mp4"
 func ParseVrFilename(filename string) VrMetadata {
 	stem := reExt.ReplaceAllString(filename, "")
 

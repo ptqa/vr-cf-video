@@ -34,7 +34,7 @@ export interface VideoSidecarMeta {
  * Catalog entry produced by combining R2 listing + parsed filename + sidecar.
  */
 export interface CatalogEntry {
-  /** Bare filename, used as URL key. e.g. "SLR_AC VR_BEST BOOBS_2900p_MKX200.mp4" */
+  /** Bare filename, used as URL key. e.g. "Sample_Title_2900p_MKX200.mp4" */
   filename: string;
   /** Bytes from R2 listing. */
   size: number;

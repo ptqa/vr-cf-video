@@ -1,8 +1,8 @@
 /**
  * Parse VR-video filenames into structured metadata.
  *
- * Filename conventions encountered in the wild encode:
- * - Studio (e.g. "SLR_", "VRBANGERS_", "wankzvr-", "Manny_S_", "NaughtyAmericaVR")
+ * Filename conventions encode:
+ * - Studio prefix (e.g. "STUDIO_A_", "STUDIO-B-")
  * - Resolution (e.g. "2900p", "4096p", "8K", "vrdesktophd")
  * - Projection (e.g. "MKX200", "180x180", "fisheye")
  * - Stereo mode (e.g. "_LR", "_TB", "3dh")
@@ -64,7 +64,7 @@ interface StudioMatcher {
 
 /**
  * Studio detection. Order matters — more specific patterns first.
- * Prefix codes (nam/naw/tdrm/tspa/ptgs) are NaughtyAmerica internal naming.
+ * Short prefix codes handled last so longer matches win.
  */
 const STUDIO_MATCHERS: StudioMatcher[] = [
   { studio: 'NaughtyAmericaVR', pattern: /^NaughtyAmericaVR\b/i },
@@ -107,7 +107,7 @@ const TAG_TOKENS = [
   /^8kvr265$/i,
   /^6kvr265$/i,
   /^4kvr265$/i,
-  // numeric scene IDs (e.g. SLR file id 31956)
+  // numeric scene IDs (e.g. 31956)
   /^\d{4,6}$/,
 ];
 
@@ -192,7 +192,7 @@ function extractTitle(remainder: string, fullStem: string): string {
 /**
  * Parse a VR video filename into structured metadata.
  *
- * @param filename Object key suffix, e.g. "SLR_AC VR_BEST BOOBS_2900p_MKX200.mp4"
+ * @param filename Object key suffix, e.g. "Sample_Title_2900p_MKX200.mp4"
  */
 export function parseVrFilename(filename: string): VrMetadata {
   // Strip extension for analysis but keep the original for the `filename` field.
